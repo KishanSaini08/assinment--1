@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Assignment 1</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <style>
+    
+        #user-form{
+            display: flex;
+            flex-wrap: wrap;
+             gap: 2em;
+            width: 30rem;
+            margin : auto;
+            padding :1em
+        }
+
+        input{
+            padding: 1rem;
+        }
+        
+       
+    </style>
+</head>
+<body>
+    <form id="user-form">
+        <input type="text" placeholder="First Name" name="firstName" required>
+        <input type="text" placeholder="Last Name" name="lastName" required>
+        <input type="text" placeholder="Mobile no" name="mobileNo" required>
+        <input type="email" placeholder="Email id" name="emailId" required>
+        <input type="text" placeholder="Street" name="address[street]" required>
+        <input type="text" placeholder="City" name="address[city]" required>
+        <input type="text" placeholder="State" name="address[state]" required>
+        <input type="text" placeholder="Country" name="address[country]" required>
+        <input type="text" placeholder="Login id" name="loginId" required>
+        <input type="password" placeholder="Password" name="password" required>
+        <button type="submit" >Save</button>
+    </form>
+
+    <button id="fetch-users-btn">Fetch Users</button>
+
+    <div id="users"></div>
+
+    <script>
+        $(document).ready(function () {
+            // Handle form submission
+            $('#user-form').on('submit', async function (e) {
+                e.preventDefault();
+                const user = $(this).serialize();
+                // it will Data like this when console the user
+            await $.post('/api/users', user);
+                $(this)[0].reset();
+            });
+        });
+
+
+
+
+        $('#fetch-users-btn').on('click', async function() {
+                    const response = await $.get('/api/users');
+                    let usersHTML = '';
+                    response.forEach(user => {
+                        usersHTML += `
+                            <p><strong>Name:</strong> ${user.firstName} ${user.lastName}</p>
+                            <p><strong>Mobile no:</strong> ${user.mobileNo}</p>
+                            <p><strong>Email id:</strong> ${user.emailId}</p>
+                            <p><strong>Address:</strong> ${user.address.street}, ${user.address.city}, ${user.address.state}, ${user.address.country}</p>
+                            <p><strong>Login id:</strong> ${user.loginId}</p>
+                            <p><strong>Creation Time:</strong> ${new Date(user.creationTime).toLocaleString()}</p>
+                            <p><strong>Last Updated On:</strong> ${new Date(user.lastUpdatedOn).toLocaleString()}</p>
+                            <hr>
+                        `;
+                    });
+                    $('#users').html(usersHTML);
+                
+            });
+        
+    </script>
+</body>
+</html>
